@@ -3,7 +3,8 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
-from recipes.models import Tag, Recipe, RecipeIngredient, Ingredient, Favorite, ShoppingCart
+from recipes.models import (Tag, Recipe, RecipeIngredient,
+                            Ingredient, Favorite, ShoppingCart)
 from users.models import User, Subscribe
 
 

@@ -1,5 +1,4 @@
 from django.db import models
-import datetime as dt
 from django.core.validators import (MaxValueValidator,
                                     MinValueValidator,)
 
@@ -66,10 +65,10 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         'Ingredient',
         through='RecipeIngredient',
-        through_fields=('recipe','ingredient'),
+        through_fields=('recipe', 'ingredient'),
         verbose_name='Ингредиенты',
     )
-    
+
     class Meta:
         ordering = ('name',)
         verbose_name = 'Рецепт'

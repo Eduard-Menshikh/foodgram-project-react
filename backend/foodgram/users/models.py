@@ -23,7 +23,7 @@ class User(AbstractUser):
     )
     password = models.CharField(
         max_length=50,
-        verbose_name='Пароль'    
+        verbose_name='Пароль'
     )
 
     class Meta:
@@ -33,7 +33,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-    
+
 
 class Subscribe(models.Model):
     user = models.ForeignKey(

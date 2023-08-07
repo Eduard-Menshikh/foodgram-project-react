@@ -7,11 +7,14 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 
-from recipes.models import Tag, Recipe, Ingredient, Favorite, ShoppingCart, RecipeIngredient
-from api.serializers import (TagSerializer, SubscriptionSerializer,
-                RecipeCreateSerializer, ShoppingCartSerializer,
-                IngredientSerializer, SubscribeAuthorSerializer,
-                FavoriteSerializer)
+from recipes.models import (
+    Tag, Recipe, Ingredient, Favorite,
+    ShoppingCart, RecipeIngredient)
+from api.serializers import (
+    TagSerializer, SubscriptionSerializer,
+    RecipeCreateSerializer, ShoppingCartSerializer,
+    IngredientSerializer, SubscribeAuthorSerializer,
+    FavoriteSerializer)
 from api.filters import SearchIngredientFilter, RecipeFilter
 from users.models import User, Subscribe
 from .mixins import CreateDeleteMixin
@@ -116,4 +119,3 @@ class RecipeViewSet(ModelViewSet, CreateDeleteMixin):
                                            'filename="shopping-cart.txt"')
         response.write(shopping_cart)
         return response
-    
