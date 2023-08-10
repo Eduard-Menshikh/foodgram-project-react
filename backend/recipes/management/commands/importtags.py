@@ -1,8 +1,5 @@
-import csv
-import os
 from django.core.management.base import BaseCommand
 from rest_framework.generics import CreateAPIView
-from foodgram.settings import BASE_DIR
 from recipes.models import Tag
 
 

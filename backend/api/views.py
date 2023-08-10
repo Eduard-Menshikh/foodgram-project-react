@@ -16,10 +16,8 @@ from api.serializers import (
     FavoriteSerializer)
 from api.filters import SearchIngredientFilter, RecipeFilter
 from users.models import User, Subscribe
-from .mixins import CreateDeleteMixin
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from rest_framework.generics import CreateAPIView, DestroyAPIView
-
 
 
 class CastomUserViewSet(CreateAPIView, DestroyAPIView, UserViewSet):
@@ -49,8 +47,8 @@ class CastomUserViewSet(CreateAPIView, DestroyAPIView, UserViewSet):
     @subscribe.mapping.delete
     def unsubscribe(self, request, id):
         return self.delete(Subscribe,
-                               user=request.user,
-                               author__id=id)
+                           user=request.user,
+                           author__id=id)
 
 
 class IngredientViewSet(ModelViewSet):
