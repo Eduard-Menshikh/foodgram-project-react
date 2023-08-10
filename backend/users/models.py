@@ -4,25 +4,25 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     email = models.EmailField(
-        max_length=50,
+        max_length=100,
         unique=True,
         verbose_name='Email',
     )
     username = models.CharField(
-        max_length=50,
+        max_length=105,
         unique=True,
         verbose_name='Логин',
     )
     first_name = models.CharField(
-        max_length=25,
+        max_length=95,
         verbose_name='Имя',
     )
     last_name = models.CharField(
-        max_length=35,
+        max_length=90,
         verbose_name='Фамилия',
     )
     password = models.CharField(
-        max_length=50,
+        max_length=110,
         verbose_name='Пароль'
     )
 
