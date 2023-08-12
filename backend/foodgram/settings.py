@@ -18,7 +18,7 @@ DEBUG = bool(strtobool(os.getenv('DEBUG', 'False')))
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-default_limit = 20
+DEFAULT_LIMIT = 20
 
 # Application definition
 

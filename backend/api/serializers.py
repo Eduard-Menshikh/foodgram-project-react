@@ -6,7 +6,7 @@ from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (Tag, Recipe, RecipeIngredient,
                             Ingredient, Favorite, ShoppingCart)
 from users.models import User, Subscribe
-from foodgram.settings import default_limit
+from foodgram.settings import DEFAULT_LIMIT
 
 
 class CustomUserCreateSerializer(serializers.ModelSerializer):
@@ -64,7 +64,7 @@ class SubscriptionSerializer(UserReadSerializer):
         if limit:
             recipes = recipes[:int(limit)]
         else:
-            recipes = recipes[:default_limit]
+            recipes = recipes[:DEFAULT_LIMIT]
         serializer = RecipeSerializer(recipes, many=True, read_only=True)
         return serializer.data
 
