@@ -1,5 +1,5 @@
 from django.db import transaction
-from djoser.serializers import UserCreateSerializer, UserSerializer
+from djoser.serializers import UserSerializer
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
@@ -9,12 +9,23 @@ from users.models import User, Subscribe
 from foodgram.settings import default_limit
 
 
-class CustomUserCreateSerializer(UserCreateSerializer):
-    """[POST] Создание нового пользователя."""
+class CustomUserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
 
-    class Meta(UserCreateSerializer.Meta):
-        fields = ('email', 'id', 'username', 'first_name',
-                  'last_name', 'password')
+    class Meta:
+        model = User
+        fields = ('email', 'username', 'first_name', 'last_name', 'password')
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            email=validated_data['email'],
+            username=validated_data['username'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 
 class UserReadSerializer(UserSerializer):
