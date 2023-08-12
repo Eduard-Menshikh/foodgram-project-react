@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
-from api.mixins import CreateDeleteMixin
+# from api.mixins import CreateDeleteMixin
 
 from recipes.models import (
     Tag, Recipe, Ingredient, Favorite,
@@ -18,10 +18,10 @@ from api.serializers import (
 from api.filters import SearchIngredientFilter, RecipeFilter
 from users.models import User, Subscribe
 from api.permissions import IsAuthorOrAdminOrReadOnly
-# from rest_framework.generics import CreateAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView
 
 
-class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
+class CastomUserViewSet(CreateAPIView, DestroyAPIView, UserViewSet):
     queryset = User.objects.all()
     permission_classes = (IsAuthorOrAdminOrReadOnly, AllowAny)
 
@@ -43,13 +43,13 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
             permission_classes=[IsAuthenticated])
     def subscribe(self, request, id):
         data = {'user': self.request.user.id, 'author': id}
-        return self.create_obj(SubscribeAuthorSerializer, data, request)
+        return self.create(SubscribeAuthorSerializer, data, request)
 
     @subscribe.mapping.delete
     def unsubscribe(self, request, id):
-        return self.delete_obj(Subscribe,
-                               user=request.user,
-                               author__id=id)
+        return self.delete(Subscribe,
+                           user=request.user,
+                           author__id=id)
 
 
 class IngredientViewSet(ModelViewSet):
@@ -67,7 +67,7 @@ class TagViewSet(ModelViewSet):
     pagination_class = None
 
 
-class RecipeViewSet(ModelViewSet, CreateDeleteMixin):
+class RecipeViewSet(ModelViewSet, CreateAPIView, DestroyAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeCreateSerializer
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
@@ -79,22 +79,22 @@ class RecipeViewSet(ModelViewSet, CreateDeleteMixin):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create_obj(FavoriteSerializer, request, data)
+        return self.create(FavoriteSerializer, data=data)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
-        return self.delete_obj(Favorite, user=request.user, recipe=pk)
+        return self.delete(Favorite, user=request.user, recipe=pk)
 
     @action(detail=True,
             methods=['post'],
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create_obj(ShoppingCartSerializer, data, pk)
+        return self.create(ShoppingCartSerializer, data, pk)
 
     @shopping_cart.mapping.delete
     def remove_from_cart(self, request, pk):
-        return self.delete_obj(ShoppingCart, user=request.user, recipe=pk)
+        return self.delete(ShoppingCart, user=request.user, recipe=pk)
 
     @action(detail=False,
             methods=['get'],
