@@ -83,7 +83,7 @@ class RecipeViewSet(ModelViewSet, CreateAPIView, DestroyAPIView):
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
-        return self.delete(Favorite, request.user, recipe=pk)
+        return self.delete(Favorite, request.user, pk)
 
     @action(detail=True,
             methods=['post'],
@@ -94,7 +94,7 @@ class RecipeViewSet(ModelViewSet, CreateAPIView, DestroyAPIView):
 
     @shopping_cart.mapping.delete
     def remove_from_cart(self, request, pk):
-        return self.delete(ShoppingCart, request.user, recipe=pk)
+        return self.delete(ShoppingCart, request.user, pk)
 
     @action(detail=False,
             methods=['get'],
