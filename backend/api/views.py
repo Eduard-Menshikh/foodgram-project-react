@@ -78,7 +78,7 @@ class RecipeViewSet(ModelViewSet, CreateAPIView, DestroyAPIView):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create(FavoriteSerializer, data, request)
+        return self.create(FavoriteSerializer, request, data)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
