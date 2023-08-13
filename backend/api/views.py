@@ -78,7 +78,7 @@ class RecipeViewSet(ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.perform_create(FavoriteSerializer, data)
+        return self.create(FavoriteSerializer, data)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
@@ -89,7 +89,7 @@ class RecipeViewSet(ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.perform_create(ShoppingCartSerializer, data)
+        return self.create(ShoppingCartSerializer, data)
 
     @shopping_cart.mapping.delete
     def remove_from_cart(self, request, pk):
