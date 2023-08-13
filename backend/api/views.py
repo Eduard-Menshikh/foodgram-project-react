@@ -81,11 +81,7 @@ class RecipeViewSet(ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        serializer = FavoriteSerializer(data=data,
-                                        context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
+        return self.create(FavoriteSerializer, data, request)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
