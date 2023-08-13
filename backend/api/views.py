@@ -85,8 +85,8 @@ class RecipeViewSet(ModelViewSet):
             favorite = Favorite.objects.create(user=request.user, recipe=recipe)
             serializer = FavoriteSerializer(favorite)
         except Recipe.DoesNotExist:
-            return Response({'error': 'Recipe not found.'}, status=status.HTTP_404_NOT_FOUND)
-        
+            return Response({'error': 'Recipe not found.'},
+                            status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @favorite.mapping.delete
@@ -96,7 +96,8 @@ class RecipeViewSet(ModelViewSet):
             favorite = Favorite.objects.delete(user=request.user, recipe=recipe)
             serializer = FavoriteSerializer(favorite)
         except Recipe.DoesNotExist:
-            return Response({'error': 'Recipe not found.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Recipe not found.'},
+                            status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True,
