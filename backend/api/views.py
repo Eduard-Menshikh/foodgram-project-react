@@ -17,11 +17,10 @@ from api.serializers import (
 from api.filters import SearchIngredientFilter, RecipeFilter
 from users.models import User, Subscribe
 from api.permissions import IsAuthorOrAdminOrReadOnly
-from rest_framework.generics import CreateAPIView, DestroyAPIView
 from api.mixins import CreateDeleteMixin
 
 
-class CastomUserViewSet(CreateAPIView, DestroyAPIView, UserViewSet):
+class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
     queryset = User.objects.all()
     permission_classes = (IsAuthorOrAdminOrReadOnly, AllowAny)
 
@@ -43,11 +42,11 @@ class CastomUserViewSet(CreateAPIView, DestroyAPIView, UserViewSet):
             permission_classes=[IsAuthenticated])
     def subscribe(self, request, id):
         data = {'user': self.request.user.id, 'author': id}
-        return self.create(SubscribeAuthorSerializer, data, request)
+        return self.create_obj(SubscribeAuthorSerializer, data, request)
 
     @subscribe.mapping.delete
     def unsubscribe(self, request, id):
-        return self.delete(Subscribe,
+        return self.delete_obj(Subscribe,
                            user=request.user,
                            author__id=id)
 
