@@ -69,7 +69,7 @@ class TagViewSet(ModelViewSet):
     pagination_class = None
 
 
-class RecipeViewSet(ModelViewSet):
+class RecipeViewSet(ModelViewSet, CreateAPIView, DestroyAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeCreateSerializer
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
@@ -79,44 +79,24 @@ class RecipeViewSet(ModelViewSet):
     @action(detail=True,
             methods=['post'],
             permission_classes=(IsAuthenticated,))
-    def favorite(self, request, pk):
-        try:
-            recipe = get_object_or_404(Recipe, id=pk)
-            favorite = Favorite.objects.create(user=request.user,
-                                               recipe=recipe)
-            serializer = FavoriteSerializer(favorite)
-        except Recipe.DoesNotExist:
-            return Response({'error': 'Recipe not found.'},
-                            status=status.HTTP_404_NOT_FOUND)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def favorite(self, request, pk, **kwargs):
+        data = {'user': request.user.id, 'recipe': pk}
+        return self.create(FavoriteSerializer, data, request)
 
     @favorite.mapping.delete
-    def unfavorite(self, request, pk):
-        try:
-            recipe = get_object_or_404(Recipe, id=pk)
-            favorite = Favorite.objects.delete(user=request.user,
-                                               recipe=recipe)
-            serializer = FavoriteSerializer(favorite)
-        except Recipe.DoesNotExist:
-            return Response({'error': 'Recipe not found.'},
-                            status=status.HTTP_404_NOT_FOUND)
-        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+    def unfavorite(self, request, pk, **kwargs):
+        return self.delete(Favorite, user=request.user, recipe=pk)
 
     @action(detail=True,
             methods=['post'],
             permission_classes=(IsAuthenticated,))
-    def shopping_cart(self, request, pk):
+    def shopping_cart(self, request, pk, **kwargs):
         data = {'user': request.user.id, 'recipe': pk}
-        serializer = ShoppingCartSerializer(data=data,
-                                            context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
+        return self.create(ShoppingCartSerializer, data, pk)
 
     @shopping_cart.mapping.delete
-    def remove_from_cart(self, request, pk):
-        get_object_or_404(ShoppingCart, user=request.user, recipe=pk).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def remove_from_cart(self, request, pk, **kwargs):
+        return self.delete(ShoppingCart, user=request.user, recipe=pk)
 
     @action(detail=False,
             methods=['get'],
