@@ -77,23 +77,23 @@ class RecipeViewSet(ModelViewSet, CreateAPIView, DestroyAPIView):
             methods=['post'],
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
-        # data = {'user': request.user.id, 'recipe': pk}
-        return self.create(FavoriteSerializer)
+        data = {'user': request.user.id, 'recipe': pk}
+        return self.create(FavoriteSerializer, data)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
-        return self.delete(Favorite)
+        return self.delete(Favorite, pk)
 
     @action(detail=True,
             methods=['post'],
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
-        # data = {'user': request.user.id, 'recipe': pk}
-        return self.create(ShoppingCartSerializer)
+        data = {'user': request.user.id, 'recipe': pk}
+        return self.create(ShoppingCartSerializer, data)
 
     @shopping_cart.mapping.delete
     def remove_from_cart(self, request, pk):
-        return self.delete(ShoppingCart)
+        return self.delete(ShoppingCart, pk)
 
     @action(detail=False,
             methods=['get'],
