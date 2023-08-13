@@ -5,6 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from api.mixins import CreateDeleteMixin
 
 from recipes.models import (
     Tag, Recipe, Ingredient, Favorite,
@@ -17,7 +18,6 @@ from api.serializers import (
 from api.filters import SearchIngredientFilter, RecipeFilter
 from users.models import User, Subscribe
 from api.permissions import IsAuthorOrAdminOrReadOnly
-from api.mixins import CreateDeleteMixin
 
 
 class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
@@ -47,8 +47,8 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
     @subscribe.mapping.delete
     def unsubscribe(self, request, id):
         return self.delete_obj(Subscribe,
-                               user=request.user,
-                               author__id=id)
+                           user=request.user,
+                           author__id=id)
 
 
 class IngredientViewSet(ModelViewSet):
@@ -78,7 +78,7 @@ class RecipeViewSet(ModelViewSet, CreateDeleteMixin):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create_obj(FavoriteSerializer, data, request)
+        return self.create_obj(FavoriteSerializer, request, data)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
