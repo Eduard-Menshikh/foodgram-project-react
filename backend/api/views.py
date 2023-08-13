@@ -5,7 +5,6 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
-# from api.mixins import CreateDeleteMixin
 
 from recipes.models import (
     Tag, Recipe, Ingredient, Favorite,
@@ -79,22 +78,22 @@ class RecipeViewSet(ModelViewSet, CreateAPIView, DestroyAPIView):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create(FavoriteSerializer, data=data)
+        return self.create(FavoriteSerializer)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
-        return self.delete(Favorite, request.user, pk)
+        return self.delete(Favorite)
 
     @action(detail=True,
             methods=['post'],
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create(ShoppingCartSerializer, data, pk)
+        return self.create(ShoppingCartSerializer)
 
     @shopping_cart.mapping.delete
     def remove_from_cart(self, request, pk):
-        return self.delete(ShoppingCart, request.user, pk)
+        return self.delete(ShoppingCart)
 
     @action(detail=False,
             methods=['get'],
