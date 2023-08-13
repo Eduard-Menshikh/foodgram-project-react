@@ -66,7 +66,7 @@ class TagViewSet(ModelViewSet):
     pagination_class = None
 
 
-class RecipeViewSet(ModelViewSet, CreateAPIView, DestroyAPIView):
+class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeCreateSerializer
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
@@ -78,22 +78,22 @@ class RecipeViewSet(ModelViewSet, CreateAPIView, DestroyAPIView):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create(FavoriteSerializer, data)
+        return self.perform_create(FavoriteSerializer, data)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
-        return self.delete(Favorite, pk)
+        return self.destroy(Favorite, pk)
 
     @action(detail=True,
             methods=['post'],
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create(ShoppingCartSerializer, data)
+        return self.perform_create(ShoppingCartSerializer, data)
 
     @shopping_cart.mapping.delete
     def remove_from_cart(self, request, pk):
-        return self.delete(ShoppingCart, pk)
+        return self.destroy(ShoppingCart, pk)
 
     @action(detail=False,
             methods=['get'],
