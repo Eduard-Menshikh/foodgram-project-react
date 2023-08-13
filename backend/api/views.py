@@ -5,6 +5,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 from recipes.models import (
     Tag, Recipe, Ingredient, Favorite,
@@ -78,22 +81,30 @@ class RecipeViewSet(ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create(FavoriteSerializer, data)
+        serializer = FavoriteSerializer(data=data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
-        return self.destroy(Favorite, pk)
+        get_object_or_404(Favorite, user=request.user, recipe=pk).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True,
             methods=['post'],
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create(ShoppingCartSerializer, data)
+        serializer = ShoppingCartSerializer(data=data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
 
     @shopping_cart.mapping.delete
     def remove_from_cart(self, request, pk):
-        return self.destroy(ShoppingCart, pk)
+        get_object_or_404(ShoppingCart, user=request.user, recipe=pk).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False,
             methods=['get'],
