@@ -76,17 +76,28 @@ class RecipeViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
-    @action(detail=True,
-            methods=['post'],
-            permission_classes=(IsAuthenticated,))
-    def favorite(self, request, pk):
-        data = {'user': request.user.id, 'recipe': pk}
-        return self.create(FavoriteSerializer, data, request)
+    @action(detail=True, 
+        methods=['post'], 
+        permission_classes=(IsAuthenticated,)) 
+    def favorite(self, request, pk): 
+        try:
+            recipe = get_object_or_404(Recipe, id=pk)
+            favorite = Favorite.objects.create(user=request.user, recipe=recipe)
+            serializer = FavoriteSerializer(favorite)
+        except Recipe.DoesNotExist:
+            return Response({'error': 'Recipe not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
-        get_object_or_404(Favorite, user=request.user, recipe=pk).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            recipe = get_object_or_404(Recipe, id=pk)
+            favorite = Favorite.objects.delete(user=request.user, recipe=recipe)
+            serializer = FavoriteSerializer(favorite)
+        except Recipe.DoesNotExist:
+            return Response({'error': 'Recipe not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True,
             methods=['post'],
