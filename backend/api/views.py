@@ -47,8 +47,8 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
     @subscribe.mapping.delete
     def unsubscribe(self, request, id):
         return self.delete_obj(Subscribe,
-                               user=request.user,
-                               author__id=id)
+                           user=request.user,
+                           author__id=id)
 
 
 class IngredientViewSet(ModelViewSet):
