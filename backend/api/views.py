@@ -5,8 +5,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
-from api.mixins import CreateDeleteMixin
 
+from api.mixins import CreateDeleteMixin
 from recipes.models import (
     Tag, Recipe, Ingredient, Favorite,
     ShoppingCart, RecipeIngredient)
