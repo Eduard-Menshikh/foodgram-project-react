@@ -89,7 +89,7 @@ class RecipeViewSet(ModelViewSet, CreateDeleteMixin):
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create_obj(ShoppingCartSerializer, data, pk)
+        return self.create_obj(ShoppingCartSerializer, data, request)
 
     @shopping_cart.mapping.delete
     def remove_from_cart(self, request, pk):
