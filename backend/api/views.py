@@ -78,7 +78,7 @@ class RecipeViewSet(ModelViewSet, CreateDeleteMixin):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
-        return self.create_obj(FavoriteSerializer, request, data)
+        return self.create_obj(FavoriteSerializer, data, request)
 
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
