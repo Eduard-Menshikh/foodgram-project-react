@@ -50,13 +50,6 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscribe
         fields = ('author', 'user')
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Subscribe.objects.all(),
-                fields=('author', 'user'),
-                message='Вы уже подписаны на пользователя'
-            )
-        ]
 
     def validate(self, data):
         author = data.get('author')
