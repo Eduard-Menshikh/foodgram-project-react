@@ -14,7 +14,7 @@ from api.serializers import (
     TagSerializer, SubscriptionSerializer,
     RecipeCreateSerializer, ShoppingCartSerializer,
     IngredientSerializer, SubscribeAuthorSerializer,
-    FavoriteSerializer)
+    FavoriteSerializer, RecipeSerializer)
 from api.filters import SearchIngredientFilter, RecipeFilter
 from users.models import User, Subscribe
 from api.permissions import IsAuthorOrAdminOrReadOnly
@@ -42,8 +42,12 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
             permission_classes=(IsAuthenticated,))
     def subscribe(self, request, id):
         if request.method == 'POST':
-            return self.create_sub(SubscribeAuthorSerializer,
-                                   SubscriptionSerializer, request, id)
+            return self.create_obj(
+                SubscribeAuthorSerializer,
+                SubscriptionSerializer,
+                User,
+                request,
+                pk=id)
         return self.delete_obj(Subscribe, user=request.user, author__id=id)
 
 
@@ -74,14 +78,22 @@ class RecipeViewSet(ModelViewSet, CreateDeleteMixin):
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         if request.method == 'POST':
-            return self.create_obj(FavoriteSerializer, request, pk)
+            return self.create_obj(FavoriteSerializer,
+                                   RecipeSerializer,
+                                   Recipe,
+                                   request,
+                                   pk)
         return self.delete_obj(Favorite, user=request.user, recipe=pk)
 
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[IsAuthenticated, ])
     def shopping_cart(self, request, pk):
         if request.method == 'POST':
-            return self.create_obj(ShoppingCartSerializer, request, pk)
+            return self.create_obj(ShoppingCartSerializer,
+                                   RecipeSerializer,
+                                   Recipe,
+                                   request,
+                                   pk)
         return self.delete_obj(ShoppingCart, user=request.user, recipe=pk)
 
     @action(detail=False,

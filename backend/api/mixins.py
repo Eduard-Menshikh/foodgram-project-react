@@ -2,36 +2,33 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 
-from api.serializers import RecipeSerializer
 from recipes.models import Recipe
-from users.models import User
 
 
 class CreateDeleteMixin:
-    def create_obj(self, serializer_class, request, pk):
-        data = {'user': request.user.id, 'recipe': pk}
+    def create_obj(self,
+                   serializer_class,
+                   serializer_return,
+                   model,
+                   request,
+                   pk):
+        if model == Recipe:
+            data = {'user': request.user.id, 'recipe': pk}
+        else:
+            data = {'user': request.user.id, 'author': pk}
         serializer = serializer_class(data=data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        recipe = get_object_or_404(Recipe, pk=pk)
-        serializer_data = RecipeSerializer(recipe).data
-        return Response(data=serializer_data,
-                        status=status.HTTP_201_CREATED)
+        object = get_object_or_404(model, pk=pk)
+        serializer_data = serializer_return(
+            object,
+            context={'request': request}
+        ).data
+        return Response(
+            data=serializer_data,
+            status=status.HTTP_201_CREATED
+        )
 
     def delete_obj(self, model, **kwargs):
         get_object_or_404(model, **kwargs).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def create_sub(self, serializer_class,
-                   serializer_return, request, id):
-        data = {'user': self.request.user.id, 'author': id}
-        serializer = serializer_class(data=data,
-                                      context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        subscribe = get_object_or_404(User, id)
-        serializer_data = serializer_return(
-            subscribe,
-            context={'request': request}).data
-        return Response(data=serializer_data,
-                        status=status.HTTP_201_CREATED)

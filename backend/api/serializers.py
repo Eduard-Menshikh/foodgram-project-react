@@ -34,7 +34,7 @@ class UserReadSerializer(UserSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'first_name',
+        fields = ('email', 'id', 'username', 'first_name',
                   'last_name', 'password', 'is_subscribed')
 
     def get_is_subscribed(self, obj):
@@ -49,6 +49,7 @@ class SubscriptionSerializer(UserReadSerializer):
     """[GET] Список авторов на которых подписан пользователь."""
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
