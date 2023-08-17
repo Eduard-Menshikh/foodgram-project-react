@@ -41,6 +41,11 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
         )
         return self.get_paginated_response(serializer.data)
 
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=(IsAuthenticated,)
+    )
     def subscribe(self, request, id=None):
         """Функция подписки и отписки от другого пользователя"""
         subscriber = request.user
