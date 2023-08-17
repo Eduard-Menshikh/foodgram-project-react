@@ -7,7 +7,6 @@ from rest_framework.validators import UniqueTogetherValidator
 from recipes.models import (Tag, Recipe, RecipeIngredient,
                             Ingredient, Favorite, ShoppingCart)
 from users.models import User, Subscribe
-from foodgram.settings import DEFAULT_LIMIT
 
 
 class CustomUserCreateSerializer(serializers.ModelSerializer):
