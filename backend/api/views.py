@@ -48,10 +48,10 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
     )
     def subscribe(self, request, id=None):
         """Функция подписки и отписки от другого пользователя"""
-        subscriber = request.user
+        user = request.user
         author = get_object_or_404(User, id=id)
         subscription = Subscribe.objects.filter(
-            author=author, subscriber=subscriber
+            author=author, user=user
         )
         if request.method == 'DELETE':
             if not subscription:
@@ -63,7 +63,7 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
                 status=status.HTTP_204_NO_CONTENT
             )
         data = {
-            'subscriber': subscriber.id,
+            'user': user.id,
             'author': author.id
         }
         serializer = SubscriptionSerializer(
