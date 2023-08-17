@@ -21,7 +21,7 @@ class CreateDeleteMixin:
     def delete_obj(self, model, **kwargs):
         get_object_or_404(model, **kwargs).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     def create_sub(self, serializer_class, request, id):
         data = {'user': self.request.user.id, 'author': id}
         serializer = serializer_class(data=data, context={'request': request})
@@ -31,4 +31,3 @@ class CreateDeleteMixin:
         serializer_data = SubscribeAuthorSerializer(subscribe).data
         return Response(data=serializer_data,
                         status=status.HTTP_201_CREATED)
-
