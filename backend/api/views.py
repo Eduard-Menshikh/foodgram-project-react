@@ -21,7 +21,6 @@ from api.serializers import (
 from api.filters import SearchIngredientFilter, RecipeFilter
 from users.models import User, Subscribe
 from api.permissions import IsAuthorOrAdminOrReadOnly
-from api.serializers import SubscriptionSerializer
 
 
 class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
@@ -66,7 +65,7 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
             'user': user.id,
             'author': author.id
         }
-        serializer = SubscriptionSerializer(
+        serializer = SubscribeAuthorSerializer(
             data=data,
             context={'request': request}
         )
