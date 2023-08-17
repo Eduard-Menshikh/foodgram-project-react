@@ -5,6 +5,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework import status
 
 from api.mixins import CreateDeleteMixin
 from recipes.models import (
@@ -18,6 +21,7 @@ from api.serializers import (
 from api.filters import SearchIngredientFilter, RecipeFilter
 from users.models import User, Subscribe
 from api.permissions import IsAuthorOrAdminOrReadOnly
+from api.serializers import SubscriptionSerializer
 
 
 class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
@@ -37,14 +41,37 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
         )
         return self.get_paginated_response(serializer.data)
 
-    @action(detail=True, methods=['post', 'delete'],
-            permission_classes=[IsAuthenticated, ])
-    def subscribe(self, request, id):
-        if request.method == 'POST':
-            return self.create_obj(ShoppingCartSerializer, request, id)
-        return self.delete_obj(Subscribe,
-                               user=request.user,
-                               author__id=id)
+    def subscribe(self, request, id=None):
+        """Функция подписки и отписки от другого пользователя"""
+        subscriber = request.user
+        author = get_object_or_404(User, id=id)
+        subscription = Subscribe.objects.filter(
+            author=author, subscriber=subscriber
+        )
+        if request.method == 'DELETE':
+            if not subscription:
+                return Response(
+                    'Вы не подписаны на этого автора',
+                    status=status.HTTP_400_BAD_REQUEST,)
+            return Response(
+                'Подписка отменена',
+                status=status.HTTP_204_NO_CONTENT
+            )
+        data = {
+            'subscriber': subscriber.id,
+            'author': author.id
+        }
+        serializer = SubscriptionSerializer(
+            data=data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        author_serializer = SubscribeAuthorSerializer(
+            author,
+            context={'request': request}
+        )
+        return Response(author_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class IngredientViewSet(ModelViewSet):
@@ -73,7 +100,7 @@ class RecipeViewSet(ModelViewSet, CreateDeleteMixin):
             methods=['post', 'delete'],
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
-        if request.method =='POST':
+        if request.method == 'POST':
             return self.create_obj(FavoriteSerializer, request, pk)
         return self.delete_obj(Favorite, user=request.user, recipe=pk)
 
