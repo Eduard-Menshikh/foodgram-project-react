@@ -14,7 +14,7 @@ from recipes.models import (
     Tag, Recipe, Ingredient, Favorite,
     ShoppingCart, RecipeIngredient)
 from api.serializers import (
-    TagSerializer, SubscriptionSerializer,
+    TagSerializer, SubscriptionsSerializer,
     RecipeCreateSerializer, ShoppingCartSerializer,
     IngredientSerializer, SubscribeAuthorSerializer,
     FavoriteSerializer)
@@ -33,7 +33,7 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
     def subscriptions(self, request):
         queryset = User.objects.filter(subscribing__user=request.user)
         page = self.paginate_queryset(queryset)
-        serializer = SubscriptionSerializer(
+        serializer = SubscribeAuthorSerializer(
             page,
             many=True,
             context={'request': request}
@@ -65,7 +65,7 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
             'user': user.id,
             'author': author.id
         }
-        serializer = SubscribeAuthorSerializer(
+        serializer = SubscriptionsSerializer(
             data=data,
             context={'request': request}
         )
