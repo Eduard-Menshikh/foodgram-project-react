@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 
-from api.serializers import RecipeSerializer, SubscribeAuthorSerializer
+from api.serializers import RecipeSerializer
 from recipes.models import Recipe
 from users.models import User
 

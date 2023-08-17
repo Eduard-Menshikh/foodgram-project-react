@@ -62,9 +62,11 @@ class SubscriptionSerializer(UserReadSerializer):
         limit = request.GET.get('recipes_limit', DEFAULT_LIMIT)
         recipes = obj.recipes.all()
         recipes = recipes[:int(limit)]
-        serializer = RecipeSerializer(recipes, many=True, context={'request': request})
+        serializer = RecipeSerializer(recipes,
+                                      many=True,
+                                      context={'request': request})
         return serializer.data
-    
+
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
         return (
