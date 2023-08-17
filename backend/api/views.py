@@ -42,7 +42,8 @@ class CastomUserViewSet(CreateDeleteMixin, UserViewSet):
             permission_classes=(IsAuthenticated,))
     def subscribe(self, request, id):
         if request.method == 'POST':
-            return self.create_sub(SubscribeAuthorSerializer, request, id)
+            return self.create_sub(SubscribeAuthorSerializer,
+                                   SubscriptionSerializer, request, id)
         return self.delete_obj(Subscribe, user=request.user, author__id=id)
 
 
